@@ -1,3 +1,4 @@
+import json
 import os
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
@@ -14,16 +15,25 @@ CREDENTIALS_PATH = "credentials.json"
 
 def get_credentials() -> Credentials:
     creds = None
-    if os.path.exists(TOKEN_PATH):
+
+    # On Railway, token is stored as an environment variable
+    token_env = os.environ.get("GOOGLE_TOKEN")
+    if token_env:
+        creds = Credentials.from_authorized_user_info(json.loads(token_env), SCOPES)
+    elif os.path.exists(TOKEN_PATH):
         creds = Credentials.from_authorized_user_file(TOKEN_PATH, SCOPES)
+
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
         else:
             flow = InstalledAppFlow.from_client_secrets_file(CREDENTIALS_PATH, SCOPES)
             creds = flow.run_local_server(port=0)
-        with open(TOKEN_PATH, "w") as f:
-            f.write(creds.to_json())
+        # Only write to file when running locally
+        if not token_env:
+            with open(TOKEN_PATH, "w") as f:
+                f.write(creds.to_json())
+
     return creds
 
 
