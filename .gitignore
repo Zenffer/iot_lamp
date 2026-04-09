@@ -1,6 +1,5 @@
 credentials.json
 token.json
-.env
 venv/
 .venv/
 __pycache__/

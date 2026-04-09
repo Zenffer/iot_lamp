@@ -1,14 +1,10 @@
-import eventlet
-eventlet.monkey_patch()
-
-import os
 import threading
 import time
 
 from flask import Flask, jsonify, render_template
 from flask_socketio import SocketIO
 
-import wled_client as mqtt_client
+import mqtt_client
 from classroom import check_assignments
 
 app = Flask(__name__)
@@ -35,18 +31,13 @@ def _do_poll():
 
 
 def _poll_classroom():
-    """Background thread: checks Google Classroom every 5 seconds."""
+    """Background thread: checks Google Classroom every 5 minutes."""
     while True:
         try:
             _do_poll()
         except Exception as e:
             print(f"[classroom poll error] {e}")
-        time.sleep(5)
-
-
-# Start background polling — runs under both direct execution and gunicorn
-_poll_thread = threading.Thread(target=_poll_classroom, daemon=True)
-_poll_thread.start()
+        time.sleep(5)  # 5 seconds
 
 
 # ── HTTP routes ──────────────────────────────────────────────────────────────
@@ -59,6 +50,7 @@ def index():
 @app.route("/status")
 def status():
     return jsonify({**_current_status, "mode": _mode})
+
 
 
 # ── WebSocket events ─────────────────────────────────────────────────────────
@@ -97,5 +89,6 @@ def on_color_temp(data):
 # ── Entry point ───────────────────────────────────────────────────────────────
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))
-    socketio.run(app, host="0.0.0.0", port=port, debug=True, use_reloader=False)
+    t = threading.Thread(target=_poll_classroom, daemon=True)
+    t.start()
+    socketio.run(app, port=5000, debug=True, use_reloader=False)
