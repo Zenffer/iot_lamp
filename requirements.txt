@@ -1,6 +1,6 @@
 flask
 flask-socketio
-paho-mqtt
+requests
 google-api-python-client
 google-auth-oauthlib
 gunicorn

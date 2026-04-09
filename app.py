@@ -8,7 +8,7 @@ import time
 from flask import Flask, jsonify, render_template
 from flask_socketio import SocketIO
 
-import mqtt_client
+import wled_client as mqtt_client
 from classroom import check_assignments
 
 app = Flask(__name__)
