@@ -1,0 +1,5 @@
+flask
+flask-socketio
+paho-mqtt
+google-api-python-client
+google-auth-oauthlib

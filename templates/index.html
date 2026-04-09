@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IoT Lamp</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <div class="card">
+    <h1>Smart Lamp</h1>
+
+    <div id="status-badge" class="badge">Checking...</div>
+
+    <div class="mode-row">
+      <span class="mode-label">Classroom Auto</span>
+      <label class="toggle">
+        <input type="checkbox" id="mode-toggle" />
+        <span class="slider-track"></span>
+      </label>
+      <span class="mode-label">Manual</span>
+    </div>
+
+    <div class="control">
+      <label for="brightness">Brightness</label>
+      <input type="range" id="brightness" min="0" max="100" value="100" />
+    </div>
+
+    <div class="control" id="color-temp-control">
+      <label for="color-temp">Color Temperature</label>
+      <div class="temp-labels"><span>Warm</span><span>Cool</span></div>
+      <input type="range" id="color-temp" min="0" max="100" value="30" />
+    </div>
+  </div>
+
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+  <script src="/static/app.js"></script>
+</body>
+</html>
