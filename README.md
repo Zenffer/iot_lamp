@@ -86,7 +86,7 @@ python app.py
 
 On first run a browser will open for Google login. After approving, `token.json` is saved and logins are automatic from then on.
 
-Open `http://localhost:5000` in a browser.
+Open `http://127.0.0.1:5000` in a browser.
 
 ## How It Works
 
