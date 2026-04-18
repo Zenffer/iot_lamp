@@ -1,4 +1,4 @@
-const socket = io('http://localhost:5000');
+const socket = io(window.location.origin);
 
 const badge = document.getElementById('status-badge');
 const brightnessSlider = document.getElementById('brightness');

@@ -1,3 +1,4 @@
+import os
 import threading
 import time
 
@@ -52,6 +53,11 @@ def status():
     return jsonify({**_current_status, "mode": _mode})
 
 
+@app.route("/ping")
+def ping():
+    return "OK", 200
+
+
 
 # ── WebSocket events ─────────────────────────────────────────────────────────
 
@@ -91,4 +97,5 @@ def on_color_temp(data):
 if __name__ == "__main__":
     t = threading.Thread(target=_poll_classroom, daemon=True)
     t.start()
-    socketio.run(app, port=5000, debug=True, use_reloader=False)
+    port = int(os.environ.get("PORT", 5000))
+    socketio.run(app, host="0.0.0.0", port=port, debug=True, use_reloader=False)

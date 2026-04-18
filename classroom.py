@@ -1,3 +1,4 @@
+import json
 import os
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
@@ -13,6 +14,13 @@ CREDENTIALS_PATH = "credentials.json"
 
 
 def get_credentials() -> Credentials:
+    # On Render, GOOGLE_TOKEN holds the token JSON so no browser is needed
+    if not os.path.exists(TOKEN_PATH):
+        token_data = os.environ.get("GOOGLE_TOKEN")
+        if token_data:
+            with open(TOKEN_PATH, "w") as f:
+                f.write(token_data)
+
     creds = None
     if os.path.exists(TOKEN_PATH):
         creds = Credentials.from_authorized_user_file(TOKEN_PATH, SCOPES)
