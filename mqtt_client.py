@@ -3,9 +3,9 @@ import os
 
 import paho.mqtt.client as mqtt
 
-MQTT_HOST = os.environ.get("2437695beb9641458ac4b61aabdb9094.s1.eu.hivemq.cloud")
-MQTT_USER = os.environ.get("aquaboxph@gmail.com")
-MQTT_PASS = os.environ.get("bicolaquaboxph")
+MQTT_HOST = os.environ.get("MQTT_HOST")
+MQTT_USER = os.environ.get("MQTT_USER")
+MQTT_PASS = os.environ.get("MQTT_PASS")
 _USE_TLS = MQTT_HOST != "localhost"
 BROKER_PORT = 8883 if _USE_TLS else 1883
 WLED_TOPIC = "wled/lamp/api"
