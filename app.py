@@ -2,14 +2,17 @@ import os
 import threading
 import time
 
-from flask import Flask, jsonify, render_template
+from flask import Flask, jsonify, render_template, request, redirect
 from flask_socketio import SocketIO
+from google_auth_oauthlib.flow import Flow
 
 import mqtt_client
 from classroom import check_assignments
 
 app = Flask(__name__)
 socketio = SocketIO(app, cors_allowed_origins="*")
+
+redirect_uri = os.environ.get("REDIRECT_URI", "http://localhost:5000/oauth2callback")
 
 _current_status = {"color": "orange", "text": "Pending assignments"}
 _mode = "auto"  # "auto" = classroom controls lamp color; "manual" = slider controls lamp color
@@ -46,6 +49,23 @@ def _poll_classroom():
 @app.route("/")
 def index():
     return render_template("index.html")
+
+
+@app.route("/login")
+def login():
+    flow = Flow.from_client_secrets_file("credentials.json", scopes=["https://www.googleapis.com/auth/classroom.courses.readonly", "https://www.googleapis.com/auth/classroom.student-submissions.me.readonly"], redirect_uri=redirect_uri)
+    authorization_url, state = flow.authorization_url(access_type='offline', include_granted_scopes='true')
+    return redirect(authorization_url)
+
+
+@app.route("/oauth2callback")
+def oauth2callback():
+    flow = Flow.from_client_secrets_file("credentials.json", scopes=["https://www.googleapis.com/auth/classroom.courses.readonly", "https://www.googleapis.com/auth/classroom.student-submissions.me.readonly"], redirect_uri=redirect_uri)
+    flow.fetch_token(code=request.args.get('code'))
+    creds = flow.credentials
+    with open("token.json", "w") as f:
+        f.write(creds.to_json())
+    return "OAuth complete! Token saved. You can close this tab and refresh the app."
 
 
 @app.route("/status")
